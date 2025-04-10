@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-center mb-5">
+        <h1 class="display-4">Welcome to DVM Bus Manager</h1>
+        <p class="lead">Your one-stop solution for hassle-free bus ticket booking.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Book Tickets</h5>
+                <p class="card-text">Search for buses on your route and book tickets instantly.</p>
+                <a href="{% url 'login' %}" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Manage Bookings</h5>
+                <p class="card-text">View, modify or cancel your bookings at any time.</p>
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">New User?</h5>
+                <p class="card-text">Register to get started with DVM Bus Manager today.</p>
+                <a href="{% url 'register' %}" class="btn btn-success">Register</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

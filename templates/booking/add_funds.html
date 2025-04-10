@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Funds - DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Add Funds to Wallet</h2>
+            <p class="lead">Add money to your wallet to book tickets</p>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Add Funds</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'booking:add_money' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount (₹)</label>
+                            <input type="number" min="100" step="100" class="form-control form-control-lg" id="amount" name="amount" required>
+                            <div class="form-text">Minimum amount: ₹100</div>
+                            {% if form.amount.errors %}
+                            <div class="text-danger">
+                                {{ form.amount.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Quick amount buttons -->
+                        <div class="mb-4">
+                            <label class="form-label">Quick Select Amount</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100">₹100</button>
+                                <button type="button" class="btn btn-outline-primary amount-btn" data-amount="500">₹500</button>
+                                <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">₹1000</button>
+                                <button type="button" class="btn btn-outline-primary amount-btn" data-amount="2000">₹2000</button>
+                                <button type="button" class="btn btn-outline-primary amount-btn" data-amount="5000">₹5000</button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'booking:wallet_detail' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-lg btn-success">
+                                Add Funds
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle quick amount buttons
+        const amountBtns = document.querySelectorAll('.amount-btn');
+        const amountInput = document.getElementById('amount');
+        
+        amountBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const amount = this.getAttribute('data-amount');
+                amountInput.value = amount;
+                
+                // Remove active class from all buttons
+                amountBtns.forEach(b => b.classList.remove('active', 'btn-primary'));
+                amountBtns.forEach(b => b.classList.add('btn-outline-primary'));
+                
+                // Add active class to clicked button
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('active', 'btn-primary');
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

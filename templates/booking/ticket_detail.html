@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ticket Details | DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    {% if messages %}
+        <div class="messages mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Ticket #{{ ticket.id }}</h4>
+            <span class="badge {% if ticket.status == 'CONFIRMED' %}bg-success{% elif ticket.status == 'CANCELLED' %}bg-danger{% elif ticket.status == 'COMPLETED' %}bg-secondary{% endif %}">
+                {{ ticket.get_status_display }}
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Journey Information -->
+                <div class="col-lg-6">
+                    <h5 class="card-title">Journey Information</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-primary mb-0">{{ ticket.bus.route.origin }}</h5>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="line"></div>
+                                    <i class="bi bi-arrow-right"></i>
+                                    <small class="text-muted">{{ ticket.bus.route.distance }} km</small>
+                                </div>
+                                <h5 class="text-primary mb-0">{{ ticket.bus.route.destination }}</h5>
+                            </div>
+                            
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">Departure:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.bus.departure_time|date:"D, d M Y" }} at {{ ticket.bus.departure_time|time:"h:i A" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">Arrival:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.bus.arrival_time|date:"D, d M Y" }} at {{ ticket.bus.arrival_time|time:"h:i A" }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">Bus Number:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.bus.bus_number }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">Duration:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.bus.route.estimated_duration }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">Seat Numbers:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.seat_numbers }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted mb-0">Booking Date:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.booking_time|date:"d M Y, h:i A" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Passenger Information -->
+                <div class="col-lg-6">
+                    <h5 class="card-title">Passenger Information</h5>
+                    {% for passenger in ticket.passengers.all %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="card-title mb-0">Passenger #{{ forloop.counter }}</h6>
+                                    {% if ticket.status == 'BOOKED' and ticket.bus.departure_time > now %}
+                                    <a href="{% url 'booking:edit_passenger' ticket.id passenger.id %}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <table class="table table-borderless table-sm">
+                                    <tr>
+                                        <td class="text-muted" style="width: 40%">Name:</td>
+                                        <td class="fw-bold">{{ passenger.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Age:</td>
+                                        <td>{{ passenger.age }} years</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-muted">Gender:</td>
+                                        <td>{{ passenger.get_gender_display }}</td>
+                                    </tr>
+                                    {% if passenger.id_number %}
+                                    <tr>
+                                        <td class="text-muted">ID Number:</td>
+                                        <td>{{ passenger.id_number }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if passenger.phone %}
+                                    <tr>
+                                        <td class="text-muted">Phone:</td>
+                                        <td>{{ passenger.phone }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Payment Information -->
+            <div class="row mt-3">
+                <div class="col-lg-12">
+                    <h5 class="card-title">Payment Details</h5>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="text-muted mb-0">Base Fare:</p>
+                                    <p class="fw-bold mb-2">₹{{ ticket.base_fare }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-muted mb-0">Tax:</p>
+                                    <p class="fw-bold mb-2">₹{{ ticket.tax }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-muted mb-0">Total Fare:</p>
+                                    <p class="fw-bold mb-2">₹{{ ticket.total_fare }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="text-muted mb-0">Payment Method:</p>
+                                    <p class="fw-bold mb-2">Wallet</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-muted mb-0">Payment Status:</p>
+                                    <p class="fw-bold mb-2">
+                                        <span class="badge bg-success">Paid</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="text-muted mb-0">Transaction ID:</p>
+                                    <p class="fw-bold mb-2">{{ ticket.transaction.id }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a href="{% url 'booking:user_journeys' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Journeys
+                    </a>
+                    <a href="#" class="btn btn-outline-primary ms-2" onclick="window.print();">
+                        <i class="bi bi-printer"></i> Print Ticket
+                    </a>
+                </div>
+                {% if ticket.status == 'CONFIRMED' %}
+                    {% with time_until=ticket.bus.departure_time|timeuntil %}
+                        {% if time_until|slice:":1" != "0" and time_until|slice:":1" != "-" %}
+                            <a href="{% url 'booking:cancel_ticket' ticket.id %}" class="btn btn-outline-danger"
+                               onclick="return confirm('Are you sure you want to cancel this booking? The amount will be refunded to your wallet.')">
+                                <i class="bi bi-x-circle"></i> Cancel Booking
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .line {
+        height: 2px;
+        width: 100px;
+        background-color: #ddd;
+        margin: 0 10px;
+    }
+    
+    @media print {
+        nav, footer, .btn, .messages {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .card-header {
+            background-color: #f8f9fa !important;
+            color: #000 !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any JavaScript needed for the ticket detail page
+</script>
+{% endblock %} 

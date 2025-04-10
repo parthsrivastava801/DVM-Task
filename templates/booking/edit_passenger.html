@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Passenger | DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'booking:index' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'booking:user_journeys' %}">My Journeys</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'booking:ticket_detail' ticket.id %}">Ticket #{{ ticket.id }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Edit Passenger</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Passenger Information</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <h5 class="alert-heading">Ticket Information</h5>
+                                <p class="mb-0">
+                                    <strong>Bus:</strong> {{ ticket.bus.bus_number }} ({{ ticket.bus.source }} to {{ ticket.bus.destination }})
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Departure:</strong> {{ ticket.bus.departure_time|date:"D, d M Y" }} at {{ ticket.bus.departure_time|time:"h:i A" }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Seat Number:</strong> {{ ticket.seat_numbers }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.name.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.age.id_for_label }}" class="form-label">{{ form.age.label }}</label>
+                                {{ form.age }}
+                                {% if form.age.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.age.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ form.gender.id_for_label }}" class="form-label">{{ form.gender.label }}</label>
+                                {{ form.gender }}
+                                {% if form.gender.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.gender.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.id_number.id_for_label }}" class="form-label">{{ form.id_number.label }}</label>
+                                {{ form.id_number }}
+                                {% if form.id_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.id_number.errors }}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">ID can be Passport, Driver's License, or any Government issued ID</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label">{{ form.phone.label }}</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.phone.errors }}
+                                </div>
+                                {% endif %}
+                                <div class="form-text">Phone number must be between 10-15 digits</div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Please ensure all information is accurate. Incorrect details may lead to issues during travel.
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'booking:ticket_detail' ticket.id %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check2"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+        
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation');
+        
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+{% endblock %} 

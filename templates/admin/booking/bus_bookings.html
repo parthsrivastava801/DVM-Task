@@ -1,0 +1,350 @@
+{% extends 'base.html' %}
+
+{% block title %}Bus Bookings - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Bus Bookings</h2>
+            <p class="lead">View all bookings for Bus {{ bus.bus_number }}</p>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Bus Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Bus Number:</th>
+                                    <td>{{ bus.bus_number }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Type:</th>
+                                    <td>{{ bus.bus_type }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Route:</th>
+                                    <td>{{ bus.source }} to {{ bus.destination }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fare:</th>
+                                    <td>₹{{ bus.fare }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Departure:</th>
+                                    <td>{{ bus.departure_time|date:"d M Y, H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Arrival:</th>
+                                    <td>{{ bus.arrival_time|date:"d M Y, H:i" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Seats:</th>
+                                    <td>{{ bus.available_seats }}/{{ bus.capacity }} available</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        {% if bus.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Booking Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Tickets</h5>
+                                    <p class="card-text display-6">{{ total_tickets }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Active Bookings</h5>
+                                    <p class="card-text display-6">{{ booked_tickets }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-danger text-white mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Cancelled</h5>
+                                    <p class="card-text display-6">{{ cancelled_tickets }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Revenue</h5>
+                                    <p class="card-text display-6">₹{{ total_revenue }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Ticket List</h5>
+                    <div>
+                        <!-- Status filter -->
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'booking:admin_bus_bookings' bus.id %}" class="btn btn-sm btn-outline-light {% if not status_filter %}active{% endif %}">
+                                All
+                            </a>
+                            <a href="{% url 'booking:admin_bus_bookings' bus.id %}?status=BOOKED" class="btn btn-sm btn-outline-light {% if status_filter == 'BOOKED' %}active{% endif %}">
+                                Booked
+                            </a>
+                            <a href="{% url 'booking:admin_bus_bookings' bus.id %}?status=CANCELLED" class="btn btn-sm btn-outline-light {% if status_filter == 'CANCELLED' %}active{% endif %}">
+                                Cancelled
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if tickets %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>User</th>
+                                    <th>Seats</th>
+                                    <th>Passengers</th>
+                                    <th>Booking Time</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ ticket.id }}</strong>
+                                    </td>
+                                    <td>
+                                        {{ ticket.user.get_full_name|default:ticket.user.username }}<br>
+                                        <small class="text-muted">{{ ticket.user.email }}</small>
+                                    </td>
+                                    <td>
+                                        {{ ticket.seat_numbers }}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#passengersModal" 
+                                                data-ticket-id="{{ ticket.id }}" data-bs-ticket-id="{{ ticket.id }}">
+                                            {{ ticket.passengers.count }} Passengers
+                                        </button>
+                                    </td>
+                                    <td>
+                                        {{ ticket.booking_time|date:"d M Y" }}<br>
+                                        <small class="text-muted">{{ ticket.booking_time|time:"H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success">₹{{ ticket.total_fare }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if ticket.status == 'BOOKED' %}
+                                        <span class="badge bg-success">Booked</span>
+                                        {% elif ticket.status == 'CANCELLED' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% elif ticket.status == 'COMPLETED' %}
+                                        <span class="badge bg-secondary">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info m-3">
+                        <p class="mb-0">No tickets found for this bus with the selected filter.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <a href="{% url 'booking:admin_bus_list' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Bus List
+            </a>
+            
+            {% if bus.is_active %}
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelBusModal">
+                <i class="bi bi-x-circle"></i> Cancel Bus
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Passengers Modal -->
+<div class="modal fade" id="passengersModal" tabindex="-1" aria-labelledby="passengersModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="passengersModalLabel">Passenger Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="passenger-loading" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading passenger details...</p>
+                </div>
+                <div id="passenger-content" class="d-none">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>ID Number</th>
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="passenger-table-body">
+                            <!-- Passengers will be loaded here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Bus Modal -->
+<div class="modal fade" id="cancelBusModal" tabindex="-1" aria-labelledby="cancelBusModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="cancelBusModalLabel">Cancel Bus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel bus <strong>{{ bus.bus_number }}</strong>?</p>
+                <p>This will:</p>
+                <ul>
+                    <li>Mark the bus as inactive</li>
+                    <li>Automatically cancel all bookings</li>
+                    <li>Refund all passengers</li>
+                </ul>
+                <p class="text-danger"><strong>This action cannot be undone!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form method="post" action="{% url 'booking:admin_bus_cancel' bus.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle passenger modal
+        const passengersModal = document.getElementById('passengersModal');
+        if (passengersModal) {
+            passengersModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const ticketId = button.getAttribute('data-ticket-id');
+                const modalTitle = passengersModal.querySelector('.modal-title');
+                
+                // Update the modal title
+                modalTitle.textContent = `Passenger Details for Ticket #${ticketId}`;
+                
+                // Show loading indicator
+                document.getElementById('passenger-loading').classList.remove('d-none');
+                document.getElementById('passenger-content').classList.add('d-none');
+                
+                // Fetch passenger details (simulated here - in a real app, you'd make an AJAX call)
+                setTimeout(() => {
+                    // This would normally be an AJAX call to get passenger details
+                    // For demo purposes, we're showing hardcoded content
+                    
+                    const tableBody = document.getElementById('passenger-table-body');
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td>John Doe</td>
+                            <td>35</td>
+                            <td>Male</td>
+                            <td>ID12345</td>
+                            <td>+91 9876543210</td>
+                        </tr>
+                        <tr>
+                            <td>Jane Doe</td>
+                            <td>30</td>
+                            <td>Female</td>
+                            <td>ID67890</td>
+                            <td>+91 9876543211</td>
+                        </tr>
+                    `;
+                    
+                    // Hide loading indicator and show content
+                    document.getElementById('passenger-loading').classList.add('d-none');
+                    document.getElementById('passenger-content').classList.remove('d-none');
+                }, 1000);
+            });
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

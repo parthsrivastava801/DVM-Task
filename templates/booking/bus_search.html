@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Buses{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Search Buses</h1>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Search Criteria</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" action="{% url 'booking:bus_search' %}">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ form.source.label_tag }}
+                            {{ form.source }}
+                            {% if form.source.errors %}
+                                <div class="text-danger">{{ form.source.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ form.destination.label_tag }}
+                            {{ form.destination }}
+                            {% if form.destination.errors %}
+                                <div class="text-danger">{{ form.destination.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            {{ form.date.label_tag }}
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                                <div class="text-danger">{{ form.date.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Search</button>
+            </form>
+        </div>
+    </div>
+
+    {% if search_performed %}
+        <!-- Sort Options -->
+        <div class="mb-3">
+            <strong>Sort by:</strong>
+            <a href="?{{ request.GET.urlencode }}&sort=departure_early" class="btn btn-sm {% if current_sort == 'departure_early' %}btn-primary{% else %}btn-outline-primary{% endif %} mr-2">Departure (Early)</a>
+            <a href="?{{ request.GET.urlencode }}&sort=departure_late" class="btn btn-sm {% if current_sort == 'departure_late' %}btn-primary{% else %}btn-outline-primary{% endif %} mr-2">Departure (Late)</a>
+            <a href="?{{ request.GET.urlencode }}&sort=fare_low" class="btn btn-sm {% if current_sort == 'fare_low' %}btn-primary{% else %}btn-outline-primary{% endif %} mr-2">Fare (Low to High)</a>
+            <a href="?{{ request.GET.urlencode }}&sort=fare_high" class="btn btn-sm {% if current_sort == 'fare_high' %}btn-primary{% else %}btn-outline-primary{% endif %}">Fare (High to Low)</a>
+        </div>
+
+        <!-- Regular Buses -->
+        {% if buses %}
+            <h2 class="mt-4 mb-3">Direct Route Buses</h2>
+            <div class="list-group">
+                {% for bus in buses %}
+                    <div class="list-group-item mb-3 bus-card">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <h5 class="mb-1">{{ bus.bus_number }}</h5>
+                                <p class="mb-1"><strong>{{ bus.route.origin }} to {{ bus.route.destination }}</strong></p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1"><i class="fa fa-clock"></i> <strong>Departure:</strong> {{ bus.departure_time|date:"D, d M Y, H:i" }}</p>
+                                <p class="mb-1"><i class="fa fa-clock"></i> <strong>Arrival:</strong> {{ bus.arrival_time|date:"D, d M Y, H:i" }}</p>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="mb-1"><i class="fa fa-money-bill"></i> <strong>Fare:</strong> ₹{{ bus.fare }}</p>
+                                <p class="mb-1"><i class="fa fa-chair"></i> <strong>Available:</strong> {{ bus.available_seats }}/{{ bus.total_seats }}</p>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a href="{% url 'booking:view_seats' bus.id %}" class="btn btn-primary">View Seats</a>
+                                {% if bus.available_seats > 0 %}
+                                    <a href="{% url 'booking:book_ticket' bus.id %}" class="btn btn-success">Book Now</a>
+                                {% else %}
+                                    <button class="btn btn-secondary" disabled>Fully Booked</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Multi-Stop Buses -->
+        {% if multi_stop_buses %}
+            <h2 class="mt-4 mb-3">Multi-Stop Route Buses</h2>
+            <div class="list-group">
+                {% for item in multi_stop_buses %}
+                    <div class="list-group-item mb-3 bus-card">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <h5 class="mb-1">{{ item.bus.bus_number }}</h5>
+                                <p class="mb-1"><strong>{{ item.start_stop.city }} to {{ item.end_stop.city }}</strong></p>
+                                <p class="mb-1 text-muted small">Part of route: {{ item.bus.route.name }}</p>
+                            </div>
+                            <div class="col-md-3">
+                                <p class="mb-1"><i class="fa fa-clock"></i> <strong>Departure:</strong>
+                                    {% if item.start_stop.departure_offset %}
+                                        {{ item.bus.departure_time|add:item.start_stop.departure_offset|date:"D, d M Y, H:i" }}
+                                    {% else %}
+                                        {{ item.bus.departure_time|date:"D, d M Y, H:i" }}
+                                    {% endif %}
+                                </p>
+                                
+                                <p class="mb-1"><i class="fa fa-clock"></i> <strong>Arrival:</strong>
+                                    {% if item.end_stop.arrival_offset %}
+                                        {{ item.bus.departure_time|add:item.end_stop.arrival_offset|date:"D, d M Y, H:i" }}
+                                    {% else %}
+                                        {{ item.bus.arrival_time|date:"D, d M Y, H:i" }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-2">
+                                <p class="mb-1"><i class="fa fa-money-bill"></i> <strong>Fare:</strong> ₹{{ item.bus.fare }}</p>
+                                <p class="mb-1"><i class="fa fa-chair"></i> <strong>Available:</strong> {{ item.bus.available_seats }}/{{ item.bus.total_seats }}</p>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <a href="{% url 'booking:view_seats' item.bus.id %}?segment={{ item.start_stop.id }}-{{ item.end_stop.id }}" class="btn btn-primary">View Seats</a>
+                                {% if item.bus.available_seats > 0 %}
+                                    <a href="{% url 'booking:book_ticket' item.bus.id %}?segment={{ item.start_stop.id }}-{{ item.end_stop.id }}" class="btn btn-success">Book Now</a>
+                                {% else %}
+                                    <button class="btn btn-secondary" disabled>Fully Booked</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if not buses and not multi_stop_buses %}
+            <div class="alert alert-info mt-4">
+                No buses found matching your search criteria. Please try different options.
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %} 

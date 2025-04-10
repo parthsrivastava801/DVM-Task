@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - DVM Bus Manager{% endblock %}
+
+{% block content %}
+{% if messages %}
+<div class="row">
+    <div class="col-md-12">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>Welcome, {{ user.full_name|default:user.email }}</h2>
+        <p>This is your personal dashboard where you can manage your bookings and account.</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary">Edit Profile</a>
+        <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">Change Password</a>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Book a Ticket</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Search for buses and book your tickets.</p>
+                <a href="{% url 'booking:bus_search' %}" class="btn btn-primary">Book Now</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">My Bookings</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">View, modify or cancel your existing bookings.</p>
+                <a href="{% url 'booking:user_journeys' %}" class="btn btn-primary">View Bookings</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">My Wallet</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Manage your wallet and view transaction history.</p>
+                <a href="{% url 'booking:wallet_detail' %}" class="btn btn-primary">Wallet</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if user.is_staff %}
+<div class="row mt-2">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Admin Tools</h4>
+            <p>As an admin, you have access to additional management tools.</p>
+            <a href="{% url 'admin:index' %}" class="btn btn-info">Go to Admin Panel</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

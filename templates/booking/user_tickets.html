@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}My Tickets - DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>My Tickets</h2>
+            <p class="lead">View and manage your bus tickets</p>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Your Tickets</h5>
+                    <div>
+                        <a href="{% url 'booking:bus_search' %}" class="btn btn-light btn-sm">
+                            <i class="bi bi-plus-circle"></i> Book New Ticket
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    {% if tickets %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ticket ID</th>
+                                    <th>Journey</th>
+                                    <th>Date & Time</th>
+                                    <th>Seats</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ticket in tickets %}
+                                <tr>
+                                    <td>
+                                        <strong>#{{ ticket.id }}</strong><br>
+                                        <small class="text-muted">Booked on {{ ticket.booking_time|date:"d M Y" }}</small>
+                                    </td>
+                                    <td>
+                                        <strong>{{ ticket.bus.source }}</strong> to<br>
+                                        <strong>{{ ticket.bus.destination }}</strong>
+                                    </td>
+                                    <td>
+                                        {{ ticket.bus.departure_time|date:"d M Y" }}<br>
+                                        <strong>{{ ticket.bus.departure_time|time:"g:i A" }}</strong>
+                                    </td>
+                                    <td>
+                                        {{ ticket.seat_numbers }}<br>
+                                        <small class="text-muted">{{ ticket.passengers.count }} passenger(s)</small>
+                                    </td>
+                                    <td>
+                                        {% if ticket.status == 'BOOKED' %}
+                                        <span class="badge bg-success">Booked</span>
+                                        {% elif ticket.status == 'CANCELLED' %}
+                                        <span class="badge bg-danger">Cancelled</span>
+                                        {% elif ticket.status == 'COMPLETED' %}
+                                        <span class="badge bg-secondary">Completed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>₹{{ ticket.total_fare }}</strong>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'booking:ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary">
+                                                View
+                                            </a>
+                                            
+                                            {% if ticket.status == 'BOOKED' %}
+                                                {% with time_until=ticket.bus.departure_time|timeuntil %}
+                                                    {% if time_until|slice:":1" != "0" and time_until|slice:":1" != "-" %}
+                                                        <button type="button" class="btn btn-sm btn-outline-danger cancel-ticket" 
+                                                                data-bs-toggle="modal" data-bs-target="#cancelModal"
+                                                                data-ticket-id="{{ ticket.id }}">
+                                                            Cancel
+                                                        </button>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center p-5">
+                        <i class="bi bi-ticket-perforated fs-1 text-muted"></i>
+                        <p class="lead mt-3">You haven't booked any tickets yet.</p>
+                        <a href="{% url 'booking:bus_search' %}" class="btn btn-primary mt-2">
+                            Book Your First Ticket
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="{% url 'booking:wallet_detail' %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-wallet2"></i> My Wallet
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'booking:bus_search' %}" class="btn btn-outline-success w-100">
+                                <i class="bi bi-search"></i> Search Buses
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'home' %}" class="btn btn-outline-dark w-100">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="cancelModalLabel">Cancel Ticket</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this ticket?</p>
+                <p>The amount will be refunded to your wallet.</p>
+                <p><strong>Note:</strong> Tickets can only be cancelled up to 6 hours before departure.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form id="cancel-form" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle cancel modal
+        const cancelBtns = document.querySelectorAll('.cancel-ticket');
+        const cancelForm = document.getElementById('cancel-form');
+        
+        cancelBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const ticketId = this.getAttribute('data-ticket-id');
+                cancelForm.action = "{% url 'booking:ticket_detail' 0 %}".replace('0', ticketId) + "cancel/";
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 
