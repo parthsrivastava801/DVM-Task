@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DVM Bus Manager - Your Verification Code</title>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4a69bd;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .otp-box {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .otp-code {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            color: #4a69bd;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .note {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DVM Bus Manager</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Your Verification Code</h2>
+            <p>You've requested a verification code for: <strong>{{ action }}</strong></p>
+            
+            <div class="otp-box">
+                <p>Your one-time verification code is:</p>
+                <div class="otp-code">{{ code }}</div>
+                <p>This code will expire in {{ expiry_minutes }} minutes.</p>
+            </div>
+            
+            <p>Enter this code on the verification page to continue.</p>
+            
+            <div class="note">
+                <strong>Security Notice:</strong> If you didn't request this code, please ignore this email or contact support if you have concerns about your account security.
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2023 DVM Bus Manager. All rights reserved.</p>
+            <p>This is an automated message, please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html> 

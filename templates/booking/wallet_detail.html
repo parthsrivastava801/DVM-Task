@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block title %}My Wallet - DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>My Wallet</h2>
+            <p class="lead">Manage your funds and view transaction history</p>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Wallet Balance</h5>
+                </div>
+                <div class="card-body">
+                    <h2 class="display-4 text-center mb-3">₹{{ wallet.balance }}</h2>
+                    <div class="text-center mb-3">
+                        <span class="badge bg-secondary">Wallet ID: {{ wallet.id }}</span>
+                    </div>
+                    <p class="text-muted text-center">
+                        <small>Last updated: {{ wallet.updated_at|date:"F j, Y, g:i a" }}</small>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Add Funds</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'booking:add_money' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount (₹)</label>
+                            <input type="number" min="100" step="100" class="form-control" id="amount" name="amount" required>
+                            <div class="form-text">Minimum amount: ₹100</div>
+                        </div>
+                        
+                        <!-- Quick amount buttons -->
+                        <div class="d-flex gap-2 flex-wrap mb-3">
+                            <button type="button" class="btn btn-outline-primary amount-btn" data-amount="100">₹100</button>
+                            <button type="button" class="btn btn-outline-primary amount-btn" data-amount="500">₹500</button>
+                            <button type="button" class="btn btn-outline-primary amount-btn" data-amount="1000">₹1000</button>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">Add Funds</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Quick Links</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'booking:bus_search' %}" class="btn btn-outline-primary">Book New Ticket</a>
+                        <a href="{% url 'booking:user_journeys' %}" class="btn btn-outline-secondary">My Tickets</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Transaction History</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if transactions %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Description</th>
+                                    <th>Ending Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for transaction in transactions %}
+                                <tr>
+                                    <td>{{ transaction.timestamp|date:"M d, Y" }}<br>
+                                        <small class="text-muted">{{ transaction.timestamp|time:"g:i a" }}</small>
+                                    </td>
+                                    <td>
+                                        {% if transaction.transaction_type == 'DEPOSIT' %}
+                                        <span class="badge bg-success">Deposit</span>
+                                        {% elif transaction.transaction_type == 'WITHDRAWAL' %}
+                                        <span class="badge bg-warning">Withdrawal</span>
+                                        {% elif transaction.transaction_type == 'PAYMENT' %}
+                                        <span class="badge bg-danger">Payment</span>
+                                        {% elif transaction.transaction_type == 'REFUND' %}
+                                        <span class="badge bg-info">Refund</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ transaction.transaction_type }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'REFUND' %}
+                                        <span class="text-success">+₹{{ transaction.amount }}</span>
+                                        {% else %}
+                                        <span class="text-danger">-₹{{ transaction.amount }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ transaction.description }}
+                                        {% if transaction.ticket %}
+                                        <br><small><a href="{% url 'booking:ticket_detail' transaction.ticket.id %}">View Ticket</a></small>
+                                        {% endif %}
+                                    </td>
+                                    <td>₹{{ transaction.ending_balance }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center p-4">
+                        <p class="text-muted">No transactions found in your wallet yet.</p>
+                        <p>Start by adding funds or booking your first ticket!</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if transactions.has_other_pages %}
+                <div class="card-footer">
+                    <nav aria-label="Transaction pagination">
+                        <ul class="pagination justify-content-center mb-0">
+                            {% if transactions.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">&laquo; First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ transactions.previous_page_number }}">Previous</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo; First</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                            {% endif %}
+                            
+                            {% for num in transactions.paginator.page_range %}
+                                {% if transactions.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                                {% elif num > transactions.number|add:'-3' and num < transactions.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if transactions.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ transactions.next_page_number }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ transactions.paginator.num_pages }}">Last &raquo;</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">Last &raquo;</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle quick amount buttons
+        const amountBtns = document.querySelectorAll('.amount-btn');
+        const amountInput = document.getElementById('amount');
+        
+        amountBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const amount = this.getAttribute('data-amount');
+                amountInput.value = amount;
+                
+                // Remove active class from all buttons
+                amountBtns.forEach(b => b.classList.remove('active', 'btn-primary'));
+                amountBtns.forEach(b => b.classList.add('btn-outline-primary'));
+                
+                // Add active class to clicked button
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('active', 'btn-primary');
+            });
+        });
+    });
+</script>
+{% endblock %} 

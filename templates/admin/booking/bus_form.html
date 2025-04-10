@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Bus - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>{{ action }} Bus</h2>
+            <p class="lead">{% if action == 'Create' %}Add a new bus to the system{% else %}Edit bus details{% endif %}</p>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">{% if action == 'Create' %}New Bus Details{% else %}Edit Bus {{ bus.bus_number }}{% endif %}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% if action == 'Create' %}{% url 'booking:admin_bus_create' %}{% else %}{% url 'booking:admin_bus_edit' bus.id %}{% endif %}">
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.bus_number.id_for_label }}" class="form-label">Bus Number</label>
+                                {{ form.bus_number }}
+                                {% if form.bus_number.errors %}
+                                <div class="text-danger">
+                                    {{ form.bus_number.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.bus_number.help_text %}
+                                <div class="form-text">{{ form.bus_number.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.bus_type.id_for_label }}" class="form-label">Bus Type</label>
+                                {{ form.bus_type }}
+                                {% if form.bus_type.errors %}
+                                <div class="text-danger">
+                                    {{ form.bus_type.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.bus_type.help_text %}
+                                <div class="form-text">{{ form.bus_type.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.source.id_for_label }}" class="form-label">Source</label>
+                                {{ form.source }}
+                                {% if form.source.errors %}
+                                <div class="text-danger">
+                                    {{ form.source.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.source.help_text %}
+                                <div class="form-text">{{ form.source.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.destination.id_for_label }}" class="form-label">Destination</label>
+                                {{ form.destination }}
+                                {% if form.destination.errors %}
+                                <div class="text-danger">
+                                    {{ form.destination.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.destination.help_text %}
+                                <div class="form-text">{{ form.destination.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.departure_time.id_for_label }}" class="form-label">Departure Time</label>
+                                {{ form.departure_time }}
+                                {% if form.departure_time.errors %}
+                                <div class="text-danger">
+                                    {{ form.departure_time.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.departure_time.help_text %}
+                                <div class="form-text">{{ form.departure_time.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.arrival_time.id_for_label }}" class="form-label">Arrival Time</label>
+                                {{ form.arrival_time }}
+                                {% if form.arrival_time.errors %}
+                                <div class="text-danger">
+                                    {{ form.arrival_time.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.arrival_time.help_text %}
+                                <div class="form-text">{{ form.arrival_time.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.fare.id_for_label }}" class="form-label">Fare (₹)</label>
+                                {{ form.fare }}
+                                {% if form.fare.errors %}
+                                <div class="text-danger">
+                                    {{ form.fare.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.fare.help_text %}
+                                <div class="form-text">{{ form.fare.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.capacity.id_for_label }}" class="form-label">Total Capacity</label>
+                                {{ form.capacity }}
+                                {% if form.capacity.errors %}
+                                <div class="text-danger">
+                                    {{ form.capacity.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.capacity.help_text %}
+                                <div class="form-text">{{ form.capacity.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.available_seats.id_for_label }}" class="form-label">Available Seats</label>
+                                {{ form.available_seats }}
+                                {% if form.available_seats.errors %}
+                                <div class="text-danger">
+                                    {{ form.available_seats.errors }}
+                                </div>
+                                {% endif %}
+                                {% if form.available_seats.help_text %}
+                                <div class="form-text">{{ form.available_seats.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            {{ form.is_active }}
+                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                Active
+                            </label>
+                            {% if form.is_active.errors %}
+                            <div class="text-danger">
+                                {{ form.is_active.errors }}
+                            </div>
+                            {% endif %}
+                            {% if form.is_active.help_text %}
+                            <div class="form-text">{{ form.is_active.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-4 d-flex justify-content-between">
+                            <a href="{% url 'booking:admin_bus_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Bus List
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                {% if action == 'Create' %}
+                                <i class="bi bi-plus-circle"></i> Create Bus
+                                {% else %}
+                                <i class="bi bi-save"></i> Save Changes
+                                {% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-set available seats equal to capacity when creating a new bus
+        {% if action == 'Create' %}
+        const capacityInput = document.getElementById('{{ form.capacity.id_for_label }}');
+        const availableSeatsInput = document.getElementById('{{ form.available_seats.id_for_label }}');
+        
+        if (capacityInput && availableSeatsInput) {
+            capacityInput.addEventListener('change', function() {
+                if (capacityInput.value) {
+                    availableSeatsInput.value = capacityInput.value;
+                }
+            });
+        }
+        {% endif %}
+    });
+</script>
+{% endblock %}
+{% endblock %} 

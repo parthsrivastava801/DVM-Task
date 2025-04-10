@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}DVM Bus Manager - Online Bus Booking System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card bg-light">
+                <div class="card-body p-5">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <h1 class="display-4 mb-4">Book Bus Tickets Online</h1>
+                            <p class="lead mb-4">Travel with comfort and convenience. Find and book bus tickets for your journey.</p>
+                            
+                            <!-- Search Form Card -->
+                            <div class="card shadow">
+                                <div class="card-header bg-primary text-white">
+                                    <h5 class="mb-0">Search Buses</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form action="{% url 'booking:bus_search' %}" method="get">
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                {{ search_form.source.label_tag }}
+                                                {{ search_form.source }}
+                                                {% if search_form.source.errors %}
+                                                    <div class="text-danger">{{ search_form.source.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {{ search_form.destination.label_tag }}
+                                                {{ search_form.destination }}
+                                                {% if search_form.destination.errors %}
+                                                    <div class="text-danger">{{ search_form.destination.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4">
+                                                {{ search_form.date.label_tag }}
+                                                {{ search_form.date }}
+                                                {% if search_form.date.errors %}
+                                                    <div class="text-danger">{{ search_form.date.errors }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 text-end">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-search"></i> Search Buses
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 d-none d-lg-block">
+                            <img src="{% static 'images/bus-illustration.svg' %}" alt="Bus Illustration" class="img-fluid" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=Bus+Bliss';">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Buses Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-4">Featured Routes</h2>
+            
+            {% if featured_buses %}
+                <div class="row">
+                    {% for bus in featured_buses %}
+                        <div class="col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">{{ bus.source }} to {{ bus.destination }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <p class="text-muted mb-1">Departure:</p>
+                                        <p class="mb-0">{{ bus.departure_time|date:"D, d M Y" }} at {{ bus.departure_time|time:"h:i A" }}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p class="text-muted mb-1">Bus:</p>
+                                        <p class="mb-0">{{ bus.bus_number }} ({{ bus.bus_type }})</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p class="text-muted mb-1">Price:</p>
+                                        <p class="mb-0"><strong>₹{{ bus.fare }}</strong> per seat</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <p class="text-muted mb-1">Available Seats:</p>
+                                        <p class="mb-0">{{ bus.available_seats }}</p>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white border-top-0">
+                                    <a href="{% url 'booking:bus_detail' bus.id %}" class="btn btn-outline-primary">View Details</a>
+                                    <a href="{% url 'booking:ticket_booking' bus.id %}" class="btn btn-primary">Book Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No featured buses available at the moment. Please try searching for your preferred route.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="mb-4">Why Choose DVM Bus Manager?</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-ticket-perforated display-4 text-primary mb-3"></i>
+                            <h4>Easy Booking</h4>
+                            <p>Book your bus tickets in just a few simple steps. No hassle, no waiting in lines.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-wallet2 display-4 text-primary mb-3"></i>
+                            <h4>Wallet System</h4>
+                            <p>Securely store your money in our wallet system for faster payments and bookings.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="bi bi-clock-history display-4 text-primary mb-3"></i>
+                            <h4>Past Journeys</h4>
+                            <p>Keep track of all your past journeys for easy reference and future planning.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Book Ticket{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        margin-bottom: 30px;
+    }
+    .fare-info {
+        font-size: 1.1rem;
+    }
+    .wallet-info {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .journey-info {
+        background-color: #e9f7fe;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .booking-summary {
+        background-color: #f0fff0;
+        padding: 15px;
+        border-radius: 5px;
+    }
+    .text-right {
+        text-align: right;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Book Your Ticket</h1>
+    
+    {% if messages %}
+    <div class="messages mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Journey Details -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Journey Details</h5>
+                    </div>
+                    <div class="card-body journey-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>From:</strong> 
+                                    {% if is_multi_stop %}
+                                        {{ start_stop.city }}
+                                    {% else %}
+                                        {{ bus.route.origin }}
+                                    {% endif %}
+                                </p>
+                                <p><strong>To:</strong> 
+                                    {% if is_multi_stop %}
+                                        {{ end_stop.city }}
+                                    {% else %}
+                                        {{ bus.route.destination }}
+                                    {% endif %}
+                                </p>
+                                <p><strong>Distance:</strong> 
+                                    {% if segment %}
+                                        {{ segment.distance }} km
+                                    {% elif bus.route.distance %}
+                                        {{ bus.route.distance }} km
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                                <p><strong>Duration:</strong> 
+                                    {% if segment and segment.duration %}
+                                        {{ segment.duration }}
+                                    {% elif bus.journey_duration %}
+                                        {{ bus.journey_duration }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Departure:</strong> {{ bus.departure_time|date:"d M Y, h:i A" }}</p>
+                                <p><strong>Arrival:</strong> {{ bus.arrival_time|date:"d M Y, h:i A" }}</p>
+                                <p><strong>Bus Number:</strong> {{ bus.bus_number }}</p>
+                                <p><strong>Available Seats:</strong> {{ bus.available_seats }}/{{ bus.total_seats }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booking Details -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Booking Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Segment Selection for Multi-stop -->
+                        {% if is_multi_stop and not segment %}
+                        <div class="form-group mb-3">
+                            {{ booking_form.segment.label_tag }}
+                            {{ booking_form.segment }}
+                            {% if booking_form.segment.errors %}
+                            <div class="text-danger">{{ booking_form.segment.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ booking_form.segment.help_text }}</small>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Seat Class Selection -->
+                        <div class="form-group mb-3">
+                            {{ booking_form.seat_class.label_tag }}
+                            {{ booking_form.seat_class }}
+                            {% if booking_form.seat_class.errors %}
+                            <div class="text-danger">{{ booking_form.seat_class.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ booking_form.seat_class.help_text }}</small>
+                        </div>
+                        
+                        <!-- Seat Numbers -->
+                        <div class="form-group mb-3">
+                            {{ booking_form.seat_numbers.label_tag }}
+                            {{ booking_form.seat_numbers }}
+                            {% if booking_form.seat_numbers.errors %}
+                            <div class="text-danger">{{ booking_form.seat_numbers.errors }}</div>
+                            {% endif %}
+                            <small class="form-text text-muted">{{ booking_form.seat_numbers.help_text }}</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Passenger Information Notice -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Passenger Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fa fa-info-circle"></i> Your account information will be used automatically for this booking. 
+                            If you need to book for someone else, you can update the passenger details later from the ticket management page.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary and Payment -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Booking Summary</h5>
+                    </div>
+                    <div class="card-body booking-summary">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <h6>Fare Details:</h6>
+                                <p class="fare-info">
+                                    Base fare: ₹{{ total_fare_estimate }} per seat<br>
+                                    Total seats: <span id="seat-count">0</span><br>
+                                    <strong>Total fare: ₹<span id="total-fare">0.00</span></strong>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="wallet-info">
+                                    <h6>Wallet Balance:</h6>
+                                    <p class="fare-info">
+                                        <strong>₹{{ wallet_balance }}</strong>
+                                    </p>
+                                    {% if wallet_balance < total_fare_estimate %}
+                                    <a href="{% url 'booking:add_funds' %}" class="btn btn-warning btn-sm">Add Money</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success btn-lg" id="book-button">Proceed to Booking</button>
+                        <a href="{% url 'booking:bus_search' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Booking Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <i class="fa fa-check text-success"></i> Choose your preferred seat class
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-check text-success"></i> Enter comma-separated seat numbers (e.g., "1,2,3")
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fa fa-check text-success"></i> Ensure you have sufficient wallet balance
+                        </li>
+                        <!-- OTP verification is temporarily disabled
+                        <li class="list-group-item">
+                            <i class="fa fa-check text-success"></i> An OTP will be sent to verify your booking
+                        </li>
+                        -->
+                        <li class="list-group-item">
+                            <i class="fa fa-info-circle text-primary"></i> Cancellation is available up to 6 hours before departure
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Calculate fare when seat numbers change
+    $('#id_seat_numbers').on('input', function() {
+        calculateFare();
+    });
+    
+    // Calculate fare when seat class changes
+    $('#id_seat_class').on('change', function() {
+        calculateFare();
+    });
+    
+    // Initial fare calculation
+    calculateFare();
+    
+    function calculateFare() {
+        var seatInput = $('#id_seat_numbers').val();
+        var seats = seatInput.split(',').filter(function(seat) {
+            return seat.trim() !== '';
+        });
+        var seatCount = seats.length;
+        var baseFare = {{ total_fare_estimate }};
+        var totalFare = seatCount * baseFare;
+        
+        $('#seat-count').text(seatCount);
+        $('#total-fare').text(totalFare.toFixed(2));
+        
+        // Disable booking button if no seats selected
+        if (seatCount === 0) {
+            $('#book-button').prop('disabled', true);
+        } else {
+            $('#book-button').prop('disabled', false);
+        }
+    }
+});
+</script>
+{% endblock %} 

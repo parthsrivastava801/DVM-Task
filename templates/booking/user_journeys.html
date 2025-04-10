@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Journeys | DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">My Journeys</h2>
+    
+    <!-- Journey filter tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link {% if filter_type == 'all' or filter_type == '' %}active{% endif %}" href="{% url 'booking:user_journeys' %}">
+                All Journeys
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if filter_type == 'upcoming' %}active{% endif %}" href="{% url 'booking:user_journeys' %}?filter=upcoming">
+                Upcoming Journeys
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if filter_type == 'past' %}active{% endif %}" href="{% url 'booking:user_journeys' %}?filter=past">
+                Past Journeys
+            </a>
+        </li>
+    </ul>
+    
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Upcoming Journeys Section -->
+    {% if upcoming_tickets %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Upcoming Journeys</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for ticket in upcoming_tickets %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-success">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">{{ ticket.bus.route.origin }} to {{ ticket.bus.route.destination }}</h5>
+                                    <span class="badge bg-success">{{ ticket.get_status_display }}</span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Journey Date:</p>
+                                            <p class="mb-0 fw-bold">{{ ticket.bus.departure_time|date:"d M Y" }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Ticket ID:</p>
+                                            <p class="mb-0 fw-bold">#{{ ticket.id }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Departure:</p>
+                                            <p class="mb-0 fw-bold">{{ ticket.bus.departure_time|time:"h:i A" }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Arrival:</p>
+                                            <p class="mb-0 fw-bold">{{ ticket.bus.arrival_time|time:"h:i A" }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Bus Number:</p>
+                                            <p class="mb-0">{{ ticket.bus.bus_number }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Seats:</p>
+                                            <p class="mb-0">{{ ticket.seat_numbers }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion" id="passengerAccordion{{ ticket.id }}">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingPassengers{{ ticket.id }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                        data-bs-target="#collapsePassengers{{ ticket.id }}" aria-expanded="false" 
+                                                        aria-controls="collapsePassengers{{ ticket.id }}">
+                                                    Passenger Details ({{ ticket.passengers.count }})
+                                                </button>
+                                            </h2>
+                                            <div id="collapsePassengers{{ ticket.id }}" class="accordion-collapse collapse" 
+                                                aria-labelledby="headingPassengers{{ ticket.id }}" data-bs-parent="#passengerAccordion{{ ticket.id }}">
+                                                <div class="accordion-body">
+                                                    {% for passenger in ticket.passengers.all %}
+                                                        <div class="card mb-2">
+                                                            <div class="card-body py-2">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <h6 class="mb-0">{{ passenger.name }}</h6>
+                                                                        <small class="text-muted">
+                                                                            {{ passenger.get_gender_display }} • {{ passenger.age }} years
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Total: ₹{{ ticket.total_fare }}</span>
+                                        <div>
+                                            <a href="{% url 'booking:ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-primary me-2">View Details</a>
+                                            {% with time_until=ticket.bus.departure_time|timeuntil %}
+                                                {% if time_until|slice:":1" != "0" and time_until|slice:":1" != "-" %}
+                                                    <a href="{% url 'booking:cancel_ticket' ticket.id %}" class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Are you sure you want to cancel this booking? The amount will be refunded to your wallet.')">
+                                                        Cancel Booking
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Past Journeys Section -->
+    {% if past_tickets %}
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Past Journeys</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for ticket in past_tickets %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 {% if ticket.status == 'CANCELLED' %}border-danger{% else %}border-secondary{% endif %}">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">{{ ticket.bus.route.origin }} to {{ ticket.bus.route.destination }}</h5>
+                                    <span class="badge {% if ticket.status == 'CANCELLED' %}bg-danger{% elif ticket.status == 'COMPLETED' %}bg-secondary{% endif %}">
+                                        {{ ticket.get_status_display }}
+                                    </span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Journey Date:</p>
+                                            <p class="mb-0 fw-bold">{{ ticket.bus.departure_time|date:"d M Y" }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Ticket ID:</p>
+                                            <p class="mb-0 fw-bold">#{{ ticket.id }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Departure:</p>
+                                            <p class="mb-0 fw-bold">{{ ticket.bus.departure_time|time:"h:i A" }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Arrival:</p>
+                                            <p class="mb-0 fw-bold">{{ ticket.bus.arrival_time|time:"h:i A" }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Bus Number:</p>
+                                            <p class="mb-0">{{ ticket.bus.bus_number }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="text-muted mb-1">Seats:</p>
+                                            <p class="mb-0">{{ ticket.seat_numbers }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="accordion" id="passengerAccordion{{ ticket.id }}">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="headingPassengers{{ ticket.id }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                        data-bs-target="#collapsePassengers{{ ticket.id }}" aria-expanded="false" 
+                                                        aria-controls="collapsePassengers{{ ticket.id }}">
+                                                    Passenger Details ({{ ticket.passengers.count }})
+                                                </button>
+                                            </h2>
+                                            <div id="collapsePassengers{{ ticket.id }}" class="accordion-collapse collapse" 
+                                                aria-labelledby="headingPassengers{{ ticket.id }}" data-bs-parent="#passengerAccordion{{ ticket.id }}">
+                                                <div class="accordion-body">
+                                                    {% for passenger in ticket.passengers.all %}
+                                                        <div class="card mb-2">
+                                                            <div class="card-body py-2">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <h6 class="mb-0">{{ passenger.name }}</h6>
+                                                                        <small class="text-muted">
+                                                                            {{ passenger.get_gender_display }} • {{ passenger.age }} years
+                                                                        </small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Total: ₹{{ ticket.total_fare }}</span>
+                                        <a href="{% url 'booking:ticket_detail' ticket.id %}" class="btn btn-sm btn-outline-secondary">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if not upcoming_tickets and not past_tickets %}
+        <div class="alert alert-info">
+            {% if filter_type == 'upcoming' %}
+                You don't have any upcoming journeys. <a href="{% url 'booking:bus_search' %}">Book a ticket now</a>.
+            {% elif filter_type == 'past' %}
+                You don't have any past journeys.
+            {% else %}
+                You haven't booked any journeys yet. <a href="{% url 'booking:bus_search' %}">Book a ticket now</a>.
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{% url 'booking:user_journeys' %}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-ticket-perforated"></i> All Tickets
+        </a>
+        <a href="{% url 'booking:bus_search' %}" class="btn btn-outline-success">
+            <i class="bi bi-search"></i> Search Buses
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add any JavaScript functionality needed for the journeys page
+</script>
+{% endblock %} 

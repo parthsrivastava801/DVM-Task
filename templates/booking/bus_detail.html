@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ bus.bus_number }} - {{ bus.source }} to {{ bus.destination }} | DVM Bus Manager{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'booking:index' %}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'booking:bus_search' %}">Search</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Bus Details</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{{ bus.source }} to {{ bus.destination }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h4 class="card-title">Bus Information</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th width="30%">Bus Number</th>
+                                            <td>{{ bus.bus_number }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Bus Type</th>
+                                            <td>{{ bus.bus_type }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>From</th>
+                                            <td>{{ bus.source }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>To</th>
+                                            <td>{{ bus.destination }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Departure</th>
+                                            <td>{{ bus.departure_time|date:"D, d M Y" }} at {{ bus.departure_time|time:"h:i A" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Arrival</th>
+                                            <td>{{ bus.arrival_time|date:"D, d M Y" }} at {{ bus.arrival_time|time:"h:i A" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Duration</th>
+                                            <td>{{ bus.arrival_time|timeuntil:bus.departure_time }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Fare</th>
+                                            <td><strong>₹{{ bus.fare }}</strong> per seat</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">Seat Availability</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        {% if is_fully_booked %}
+                                            <span class="badge bg-danger p-2 mb-2">FULLY BOOKED</span>
+                                        {% else %}
+                                            <span class="badge bg-success p-2 mb-2">SEATS AVAILABLE</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="progress mb-3" style="height: 25px;">
+                                        {% with booked_percentage=booked_seats_count|floatformat:0|add:0 %}
+                                        <div class="progress-bar bg-primary" role="progressbar" 
+                                             style="width: {{ booked_percentage }}%;" 
+                                             aria-valuenow="{{ booked_percentage }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ booked_percentage }}% Booked
+                                        </div>
+                                        {% endwith %}
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <p class="mb-1">Total Capacity: <strong>{{ bus.capacity }}</strong> seats</p>
+                                        <p class="mb-1">Booked: <strong>{{ booked_seats_count }}</strong> seats</p>
+                                        <p class="mb-0">Available: <strong>{{ bus.available_seats }}</strong> seats</p>
+                                    </div>
+                                    
+                                    <div class="d-grid mt-4">
+                                        {% if is_fully_booked %}
+                                            <button class="btn btn-danger" disabled>Fully Booked</button>
+                                        {% else %}
+                                            <a href="{% url 'booking:view_seats' bus.id %}" class="btn btn-outline-primary mb-2">View Seats</a>
+                                            <a href="{% url 'booking:ticket_booking' bus.id %}" class="btn btn-primary">Book Now</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Amenities</h4>
+                            <div class="row">
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-wifi me-2 text-primary"></i>
+                                        <span>Free Wi-Fi</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-plug me-2 text-primary"></i>
+                                        <span>Charging Points</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-snow2 me-2 text-primary"></i>
+                                        <span>Air Conditioning</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-cup-hot me-2 text-primary"></i>
+                                        <span>Water Bottle</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-tv me-2 text-primary"></i>
+                                        <span>Entertainment</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-recycle me-2 text-primary"></i>
+                                        <span>Clean Toilets</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-exclamation-triangle me-2 text-primary"></i>
+                                        <span>Emergency Exit</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-bandaid me-2 text-primary"></i>
+                                        <span>First Aid Kit</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'booking:bus_search' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Search
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
