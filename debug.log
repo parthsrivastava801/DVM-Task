@@ -1,0 +1,160 @@
+INFO 2025-04-13 18:20:14,088 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:21:14,499 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:22:54,524 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:23:13,313 basehttp "GET /accounts/google/login/callback/?state=yej3kbDlQufSVcL6&code=4%2F0Ab_5qlmksJj1w-l7ksvlDS4-IXG7l5ORWzKEluzYMOv2Xf72zQOK5blcfPMkpCFac3aDjw&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=2&prompt=consent HTTP/1.1" 200 1119
+INFO 2025-04-13 18:23:15,469 basehttp "GET /accounts/login/ HTTP/1.1" 200 4199
+INFO 2025-04-13 18:23:17,501 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1412
+INFO 2025-04-13 18:23:19,267 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-04-13 18:23:23,087 adapters Processing pre_social_login for google
+INFO 2025-04-13 18:23:23,087 adapters Checking for existing user with email: clashforcash2528@gmail.com
+INFO 2025-04-13 18:23:23,088 adapters Found existing user: clashforcash2528@gmail.com
+ERROR 2025-04-13 18:23:23,095 adapters Error in pre_social_login: <HttpResponseRedirect status_code=302, "text/html; charset=utf-8", url="/accounts/dashboard/">
+INFO 2025-04-13 18:23:23,104 basehttp "GET /accounts/google/login/callback/?state=b5F2Ghbnt5gDqmF5&code=4%2F0Ab_5qln4kg0zxxEspaoV_wKSdmqGF9S8As1W004g-P0h0NfxS51Vu8WG3oiuTHfL4CqV3w&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=2&prompt=none HTTP/1.1" 302 0
+WARNING 2025-04-13 18:23:23,112 log Not Found: /accounts/google/login/callback/dashboard
+WARNING 2025-04-13 18:23:23,113 basehttp "GET /accounts/google/login/callback/dashboard HTTP/1.1" 404 14617
+INFO 2025-04-13 18:24:08,177 autoreload /home/parth/DVM Task/Bus_Booking/urls.py changed, reloading.
+INFO 2025-04-13 18:24:08,496 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:24:09,602 autoreload /home/parth/DVM Task/Bus_Booking/urls.py changed, reloading.
+INFO 2025-04-13 18:24:09,921 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:24:20,084 autoreload /home/parth/DVM Task/Bus_Booking/settings.py changed, reloading.
+INFO 2025-04-13 18:24:20,466 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:24:47,742 autoreload /home/parth/DVM Task/accounts/adapters.py changed, reloading.
+INFO 2025-04-13 18:24:48,126 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:25:07,365 autoreload /home/parth/DVM Task/accounts/urls.py changed, reloading.
+INFO 2025-04-13 18:25:07,763 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:25:20,739 autoreload Watching for file changes with StatReloader
+INFO 2025-04-13 18:25:32,802 basehttp "GET /accounts/google/login/callback/dashboard HTTP/1.1" 302 0
+INFO 2025-04-13 18:25:32,814 basehttp "GET /accounts/dashboard/ HTTP/1.1" 200 4758
+INFO 2025-04-13 18:25:44,741 basehttp "GET /booking/search/ HTTP/1.1" 200 4232
+INFO 2025-04-13 18:25:48,094 basehttp "GET /booking/my-journeys/ HTTP/1.1" 200 3955
+INFO 2025-04-13 18:25:52,910 basehttp "GET /booking/search/ HTTP/1.1" 200 4232
+INFO 2025-04-13 18:26:20,669 basehttp "GET / HTTP/1.1" 200 4000
+INFO 2025-04-13 19:55:26,433 basehttp "GET / HTTP/1.1" 200 4000
+WARNING 2025-04-13 19:55:26,586 log Not Found: /favicon.ico
+INFO 2025-04-13 19:55:29,187 basehttp "GET /accounts/login/ HTTP/1.1" 200 4782
+INFO 2025-04-13 19:55:30,371 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1977
+INFO 2025-04-13 19:55:31,892 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-04-13 19:55:37,061 basehttp "GET /accounts/google/login/callback/?state=2AbzaeM6F4iJYW1s&code=4%2F0Ab_5qllLX4edHAjpsp9hPScup4ICorzJm43SU7N_pv4cXh6ZztJucnK0UMiKaqPuRV8uuQ&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=1&prompt=consent HTTP/1.1" 302 0
+INFO 2025-04-13 19:55:37,098 basehttp "GET /accounts/dashboard/ HTTP/1.1" 200 4381
+INFO 2025-04-13 19:55:48,706 basehttp "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-04-13 19:55:48,752 basehttp "GET /admin/login/?next=/admin/ HTTP/1.1" 200 3724
+INFO 2025-04-13 19:55:48,925 basehttp "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2025-04-13 19:55:48,926 basehttp "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2025-04-13 19:55:48,932 basehttp "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2025-04-13 19:55:48,933 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO 2025-04-13 19:55:48,936 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 16632
+INFO 2025-04-13 19:55:48,937 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 22154
+INFO 2025-04-13 19:55:48,939 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2025-04-13 19:55:53,041 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-04-13 19:55:53,082 basehttp "GET /admin/ HTTP/1.1" 200 21740
+INFO 2025-04-13 19:55:53,186 basehttp "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-04-13 19:55:53,210 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-04-13 19:55:53,211 basehttp "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-04-13 19:55:53,212 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-04-13 19:59:33,908 basehttp "GET /admin/booking/multistopbus/ HTTP/1.1" 200 23127
+INFO 2025-04-13 19:59:34,088 basehttp "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-04-13 19:59:34,091 basehttp "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+INFO 2025-04-13 19:59:34,097 basehttp "GET /static/admin/css/forms.css HTTP/1.1" 200 8525
+INFO 2025-04-13 19:59:34,103 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-04-13 19:59:34,104 basehttp "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9777
+INFO 2025-04-13 19:59:34,108 basehttp "GET /static/admin/js/actions.js HTTP/1.1" 200 8076
+INFO 2025-04-13 19:59:34,113 basehttp "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-04-13 19:59:34,115 basehttp "GET /static/admin/js/core.js HTTP/1.1" 200 6208
+INFO 2025-04-13 19:59:34,119 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 19:59:34,122 basehttp "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-04-13 19:59:34,123 basehttp "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 285314
+INFO 2025-04-13 19:59:34,128 basehttp "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 325171
+INFO 2025-04-13 19:59:34,150 basehttp "GET /static/admin/css/widgets.css HTTP/1.1" 200 11991
+INFO 2025-04-13 19:59:34,194 basehttp "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-04-13 19:59:34,259 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-04-13 19:59:34,260 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+WARNING 2025-04-13 19:59:34,322 log Not Found: /favicon.ico
+INFO 2025-04-13 19:59:39,082 basehttp "GET /admin/booking/multistopbus/add/ HTTP/1.1" 200 26938
+INFO 2025-04-13 19:59:39,287 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 19:59:39,292 basehttp "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-04-13 19:59:39,296 basehttp "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-04-13 19:59:39,297 basehttp "GET /static/admin/js/calendar.js HTTP/1.1" 200 9141
+INFO 2025-04-13 19:59:39,298 basehttp "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+INFO 2025-04-13 19:59:39,647 basehttp "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+INFO 2025-04-13 19:59:39,648 basehttp "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+INFO 2025-04-13 19:59:44,687 basehttp "GET /admin/booking/route/ HTTP/1.1" 200 20029
+INFO 2025-04-13 19:59:44,797 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 19:59:44,921 log Not Found: /favicon.ico
+INFO 2025-04-13 19:59:46,810 basehttp "GET /admin/booking/route/add/ HTTP/1.1" 200 20130
+INFO 2025-04-13 19:59:46,903 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 19:59:54,334 basehttp "GET /admin/booking/multistoproute/ HTTP/1.1" 200 20795
+INFO 2025-04-13 19:59:54,422 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 19:59:54,429 basehttp "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-04-13 19:59:56,652 basehttp "GET /admin/booking/multistoproute/add/ HTTP/1.1" 200 36058
+INFO 2025-04-13 19:59:56,798 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 19:59:56,800 basehttp "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+INFO 2025-04-13 19:59:56,806 basehttp "GET /static/admin/js/inlines.js HTTP/1.1" 200 15628
+INFO 2025-04-13 19:59:57,057 basehttp "GET /static/admin/img/inline-delete.svg HTTP/1.1" 200 537
+INFO 2025-04-13 20:04:44,418 basehttp "POST /admin/booking/multistoproute/add/ HTTP/1.1" 302 0
+INFO 2025-04-13 20:04:44,493 basehttp "GET /admin/booking/multistoproute/ HTTP/1.1" 200 21579
+INFO 2025-04-13 20:04:44,729 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 20:04:52,570 basehttp "GET /admin/booking/routesegment/ HTTP/1.1" 200 21454
+INFO 2025-04-13 20:04:52,691 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:04:52,835 log Not Found: /favicon.ico
+INFO 2025-04-13 20:04:55,116 basehttp "GET /admin/booking/routesegment/add/ HTTP/1.1" 200 25445
+INFO 2025-04-13 20:04:55,271 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:04:55,424 log Not Found: /favicon.ico
+INFO 2025-04-13 20:05:50,354 basehttp "POST /admin/booking/routesegment/add/ HTTP/1.1" 302 0
+INFO 2025-04-13 20:05:50,430 basehttp "GET /admin/booking/routesegment/ HTTP/1.1" 200 22227
+INFO 2025-04-13 20:05:50,611 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:05:50,700 log Not Found: /favicon.ico
+INFO 2025-04-13 20:05:53,293 basehttp "GET /admin/booking/routesegment/add/ HTTP/1.1" 200 25445
+INFO 2025-04-13 20:05:53,465 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:05:53,642 log Not Found: /favicon.ico
+INFO 2025-04-13 20:06:11,694 basehttp "POST /admin/booking/routesegment/add/ HTTP/1.1" 302 0
+INFO 2025-04-13 20:06:11,778 basehttp "GET /admin/booking/routesegment/ HTTP/1.1" 200 22768
+INFO 2025-04-13 20:06:11,957 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:06:12,056 log Not Found: /favicon.ico
+INFO 2025-04-13 20:06:13,634 basehttp "GET /admin/booking/multistopbus/ HTTP/1.1" 200 23468
+INFO 2025-04-13 20:06:13,783 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 20:06:15,322 basehttp "GET /admin/booking/multistoproute/ HTTP/1.1" 200 21334
+INFO 2025-04-13 20:06:15,460 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:06:15,588 log Not Found: /favicon.ico
+INFO 2025-04-13 20:06:16,524 basehttp "GET /admin/booking/multistoproute/add/ HTTP/1.1" 200 36622
+INFO 2025-04-13 20:06:16,629 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 20:06:21,124 basehttp "GET /admin/booking/multistoproute/ HTTP/1.1" 200 21334
+INFO 2025-04-13 20:06:22,588 basehttp "GET /admin/booking/multistoproute/2/change/ HTTP/1.1" 200 53390
+INFO 2025-04-13 20:06:22,715 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 20:06:32,577 basehttp "GET /admin/booking/multistopbus/ HTTP/1.1" 200 23468
+INFO 2025-04-13 20:06:32,717 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:06:32,844 log Not Found: /favicon.ico
+INFO 2025-04-13 20:06:35,750 basehttp "GET /admin/booking/multistopbus/add/ HTTP/1.1" 200 26997
+INFO 2025-04-13 20:06:35,917 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-04-13 20:06:36,055 log Not Found: /favicon.ico
+INFO 2025-04-13 20:06:51,081 basehttp "GET /static/admin/img/calendar-icons.svg HTTP/1.1" 200 2455
+INFO 2025-04-13 20:07:14,335 basehttp "POST /admin/booking/multistopbus/add/ HTTP/1.1" 302 0
+INFO 2025-04-13 20:07:14,404 basehttp "GET /admin/booking/multistopbus/ HTTP/1.1" 200 24711
+INFO 2025-04-13 20:07:14,577 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+INFO 2025-04-13 20:07:14,580 basehttp "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+INFO 2025-04-13 20:07:14,586 basehttp "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+INFO 2025-04-13 20:07:14,589 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO 2025-04-13 20:07:14,589 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+INFO 2025-04-13 20:07:14,590 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 22154
+INFO 2025-04-13 20:07:14,597 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-04-13 20:07:14,674 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-04-13 20:07:14,674 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+WARNING 2025-04-13 20:07:14,806 log Not Found: /favicon.ico
+INFO 2025-04-13 20:07:22,440 basehttp "GET /booking/wallet/ HTTP/1.1" 200 12997
+WARNING 2025-04-13 20:07:22,746 log Not Found: /favicon.ico
+INFO 2025-04-13 20:08:03,631 basehttp "POST /booking/wallet/add/ HTTP/1.1" 302 0
+INFO 2025-04-13 20:08:03,660 basehttp "GET /booking/wallet/ HTTP/1.1" 200 14302
+WARNING 2025-04-13 20:08:03,801 log Not Found: /favicon.ico
+INFO 2025-04-13 20:08:41,264 basehttp "GET /booking/search/ HTTP/1.1" 200 4365
+INFO 2025-04-13 20:08:58,569 basehttp "GET /booking/search/?source=Lucknow&destination=Indore&date=2025-04-13 HTTP/1.1" 200 7329
+WARNING 2025-04-13 20:08:58,711 log Not Found: /favicon.ico
+INFO 2025-04-13 20:09:01,454 basehttp "GET /booking/bus/2/seats/?segment=4-5 HTTP/1.1" 200 58919
+INFO 2025-04-13 20:09:17,507 basehttp "GET /booking/book/2/?seat_numbers=2,3,4 HTTP/1.1" 200 12589
+INFO 2025-04-13 20:09:51,285 basehttp "POST /booking/book/2/?seat_numbers=2,3,4 HTTP/1.1" 302 0
+INFO 2025-04-13 20:09:51,322 basehttp "GET /booking/booking/success/3/ HTTP/1.1" 200 8624
+WARNING 2025-04-13 20:09:51,506 log Not Found: /favicon.ico
+INFO 2025-04-13 20:09:56,580 basehttp "GET /booking/my-journeys/ HTTP/1.1" 200 28369
+WARNING 2025-04-13 20:09:56,698 log Not Found: /favicon.ico
+INFO 2025-04-13 20:09:59,433 basehttp "GET /booking/my-journeys/?filter=upcoming HTTP/1.1" 200 12153
+INFO 2025-04-13 20:10:00,014 basehttp "GET /booking/my-journeys/?filter=past HTTP/1.1" 200 19744
+INFO 2025-04-13 20:10:02,604 basehttp "GET /booking/my-journeys/ HTTP/1.1" 200 27997
+INFO 2025-04-13 20:18:59,475 basehttp "GET / HTTP/1.1" 200 4133

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load socialaccount %}
+{% load social_auth_helpers %}
 
 {% block title %}Register - DVM Bus Manager{% endblock %}
 
@@ -79,9 +80,15 @@
                 <div class="mt-4">
                     <p class="text-center mb-3">-- OR --</p>
                     <div class="d-grid">
-                        <a href="#" class="btn btn-outline-secondary disabled">
-                            <i class="bi bi-google me-2"></i>Google Sign-in (Coming Soon)
+                        {% if google_oauth_configured %}
+                        <a href="{% provider_login_url 'google' process='signup' %}" class="btn btn-danger">
+                            <i class="bi bi-google me-2"></i>Sign up with Google
                         </a>
+                        {% else %}
+                        <a href="#" class="btn btn-outline-secondary disabled">
+                            <i class="bi bi-google me-2"></i>Google Sign-up (Not Configured)
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

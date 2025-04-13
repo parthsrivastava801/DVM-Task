@@ -20,8 +20,8 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),  # Your custom URLs should come first
-    path('accounts/', include('allauth.urls')),  # Django AllAuth URLs come second
+    path('accounts/', include('accounts.urls')), 
+    path('accounts/', include('allauth.urls')), 
     path('booking/', include('booking.urls', namespace='booking')),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]

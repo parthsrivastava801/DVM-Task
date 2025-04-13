@@ -5,12 +5,15 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, TemplateView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.contrib.sessions.backends.base import SessionBase
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _
+from allauth.socialaccount.models import SocialApp
+from django.contrib.sites.models import Site
+import json
 
 from .forms import (
     CustomUserCreationForm, CustomAuthenticationForm, UserProfileForm,
@@ -215,3 +218,51 @@ def custom_logout(request):
     
     # Redirect to home page
     return redirect('/')
+
+
+def debug_oauth_status(request):
+    """
+    Debug view to check OAuth configuration
+    """
+    if not request.user.is_superuser:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+    
+    # Get Google OAuth app
+    google_apps = SocialApp.objects.filter(provider='google')
+    google_app_data = []
+    
+    for app in google_apps:
+        sites = list(app.sites.all().values_list('domain', flat=True))
+        google_app_data.append({
+            'id': app.id,
+            'name': app.name,
+            'provider': app.provider,
+            'client_id': app.client_id,
+            'secret': '***REDACTED***',  # Don't expose the actual secret
+            'sites': sites
+        })
+    
+    # Get current site
+    current_site = Site.objects.get_current()
+    site_data = {
+        'id': current_site.id,
+        'domain': current_site.domain,
+        'name': current_site.name
+    }
+    
+    # Callback URLs
+    callback_urls = [
+        f"http://{current_site.domain}/accounts/google/login/callback/",
+        f"https://{current_site.domain}/accounts/google/login/callback/"
+    ]
+    
+    data = {
+        'google_apps': google_app_data,
+        'current_site': site_data,
+        'callback_urls': callback_urls,
+        'allauth_callbacks': [
+            '/accounts/google/login/callback/'
+        ]
+    }
+    
+    return JsonResponse(data)

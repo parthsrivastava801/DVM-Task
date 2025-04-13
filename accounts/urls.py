@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth.views import (
     LogoutView,
     PasswordResetView,
@@ -9,6 +9,7 @@ from django.contrib.auth.views import (
     PasswordChangeDoneView
 )
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 from . import views
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
@@ -65,4 +66,9 @@ urlpatterns = [
              template_name='accounts/password_change_done.html'
          ), 
          name='password_change_done'),
+
+    path('debug/oauth-status/', views.debug_oauth_status, name='debug_oauth_status'),  # Debugging endpoint
+    
+    # Catch-all for the Google callback path with trailing parts
+    re_path(r'^google/login/callback/.*$', lambda request: redirect('/accounts/dashboard/')),
 ] 
